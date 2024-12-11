@@ -6,6 +6,7 @@ import (
 
 	"govima/app/object/latex"
 	"govima/app/resource/config"
+	"govima/app/scene"
 	imagescene "govima/app/scene/image_scene"
 	videoscene "govima/app/scene/video_scene"
 
@@ -15,32 +16,22 @@ import (
 func main() {
 	config.Init()
 
-	s1 := videoscene.NewVideoScene(800, 600, 60, 3, scene1Func, map[string]interface{}{
+	videoscene.NewVideoScene(800, 600, 60, 3, scene1Func, map[string]interface{}{
 		"totalFrames": 3 * 60,
 		"frameId":     0,
 	})
-	s2 := videoscene.NewVideoScene(800, 600, 60, 1, scene2Func, map[string]interface{}{})
-	s3 := imagescene.NewImageScene(800, 600, scene3Func, map[string]interface{}{})
+	videoscene.NewVideoScene(800, 600, 60, 1, scene2Func, map[string]interface{}{})
+	imagescene.NewImageScene(800, 600, scene3Func, map[string]interface{}{})
 
 	wg := sync.WaitGroup{}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		s1.Save()
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		s2.Save()
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		s3.Save()
-	}()
+	for _, s := range scene.SceneList.Scenes {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			s.Save()
+		}()
+	}
 
 	wg.Wait()
 }
