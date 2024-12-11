@@ -6,6 +6,7 @@ import (
 	"os"
 	"sync"
 
+	"govima/app/object/latex"
 	"govima/app/resource/config"
 	imagescene "govima/app/scene/image_scene"
 	videoscene "govima/app/scene/video_scene"
@@ -79,19 +80,12 @@ func scene2Func(surf *cairo.Surface, state map[string]interface{}) {
 }
 
 func scene3Func(surf *cairo.Surface, state map[string]interface{}) {
-	surf.SetAntialias(cairo.ANTIALIAS_GRAY)
-
 	surf.Rectangle(0, 0, config.Config.Width, config.Config.Height)
-	surf.SetSourceRGB(0, 0, 0)
-	surf.Fill()
-
-	surf.SelectFontFace("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-	surf.SetFontSize(42)
 	surf.SetSourceRGB(1, 1, 1)
-	text := fmt.Sprintf("%s", "Test Image Scene")
-	extents := surf.TextExtents(text)
-	surf.MoveTo(config.Config.Width/2-extents.Width/2, config.Config.Height/2+extents.Height/2)
-	surf.ShowText(text)
+	surf.Fill()
+	latexObj := latex.NewLatexObject(`$f(x) = \frac{\sqrt{x}}{2\pi}$`, 12, 300, nil)
+	latexObj.Compile()
+	latexObj.Render(surf, config.Config.Width/2-latexObj.GetWidth(), config.Config.Height/2-latexObj.GetHeight())
 }
 
 func createBaseFolders() {
@@ -101,5 +95,9 @@ func createBaseFolders() {
 
 	if err := os.MkdirAll(config.Config.OutputDir, 0755); err != nil {
 		log.Fatalf("Failed to create output directory: %v", err)
+	}
+
+	if err := os.MkdirAll(config.Config.LatexDir, 0755); err != nil {
+		log.Fatalf("Failed to create latex directory: %v", err)
 	}
 }

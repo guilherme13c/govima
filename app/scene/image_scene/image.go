@@ -2,6 +2,7 @@ package imagescene
 
 import (
 	"fmt"
+	"govima/app/misc"
 	"govima/app/resource/config"
 	"govima/app/scene"
 	"log"
@@ -10,17 +11,18 @@ import (
 )
 
 type ImageScene_t struct {
-	id              scene.SceneId_t                                         // Scene Identifier
+	id              misc.Id_t                                               // Scene Identifier
 	state           map[string]interface{}                                  // Scene state
 	outputImagePath string                                                  // Path of the generated video
 	renderFunc      func(surf *cairo.Surface, state map[string]interface{}) // function to handle the renderization of the scene
 }
 
 func NewImageScene(renderFunc func(surf *cairo.Surface, state map[string]interface{}), initState map[string]interface{}) *ImageScene_t {
-	outputImagePath := fmt.Sprintf("%s/scene_%04d.png", config.Config.OutputDir, scene.SceneList.GetNextId())
+	id := misc.NextId()
+	outputImagePath := fmt.Sprintf("%s/scene_%04d.png", config.Config.OutputDir, id)
 
 	s := ImageScene_t{
-		id:              scene.SceneList.GetNextId(),
+		id:              id,
 		renderFunc:      renderFunc,
 		state:           initState,
 		outputImagePath: outputImagePath,
@@ -28,6 +30,14 @@ func NewImageScene(renderFunc func(surf *cairo.Surface, state map[string]interfa
 	scene.SceneList.Add(s)
 
 	return &s
+}
+
+func (s ImageScene_t) Save() {
+	s.renderFrame()
+}
+
+func (s ImageScene_t) GetId() misc.Id_t {
+	return s.id
 }
 
 // Render a single frame using Cairo
@@ -44,8 +54,4 @@ func (s ImageScene_t) renderFrame() {
 
 	// Clean up
 	surface.Finish()
-}
-
-func (s ImageScene_t) Save() {
-    s.renderFrame()
 }

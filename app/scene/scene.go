@@ -1,7 +1,8 @@
 package scene
 
-type SceneId_t uint32
+import "govima/app/misc"
 
 type Scene_i interface {
 	Save()
+	GetId() misc.Id_t
 }

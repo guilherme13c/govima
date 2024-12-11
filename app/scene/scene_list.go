@@ -1,8 +1,9 @@
 package scene
 
+import "govima/app/misc"
+
 type SceneList_t struct {
-	nextSceneId SceneId_t
-	Scenes      []Scene_i
+	Scenes []Scene_i
 }
 
 func (sl *SceneList_t) Add(s Scene_i) {
@@ -11,11 +12,7 @@ func (sl *SceneList_t) Add(s Scene_i) {
 	}
 
 	sl.Scenes = append(sl.Scenes, s)
-	sl.nextSceneId++
-}
-
-func (sl *SceneList_t) GetNextId() SceneId_t {
-	return sl.nextSceneId
+	misc.NextId()
 }
 
 var SceneList SceneList_t

@@ -17,13 +17,15 @@ type Config_t struct {
 	Height     float64
 	FrameDir   string
 	OutputDir  string
+	LatexDir   string
 	FFmpegArgs ffmpeg.KwArgs
 }
 
 var Config = Config_t{
 	Width:      1920,
 	Height:     1080,
-	FrameDir:   "frames",
+	FrameDir:   "tmp/frames",
 	OutputDir:  "output",
+	LatexDir:   "tmp/latex",
 	FFmpegArgs: ffmpegArgs,
 }
