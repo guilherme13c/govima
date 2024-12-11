@@ -20,12 +20,17 @@ type VideoScene_t struct {
 	duration        uint32                                                  // Duration of the scene in seconds
 	frameDir        string                                                  // Path to temporary directory to store frames
 	outputVideoPath string                                                  // Path of the generated video
-	renderFunc      func(surf *cairo.Surface, state map[string]interface{}) // function to handle the renderization of the scene
+	renderFunc      func(surf *cairo.Surface, state map[string]interface{}) // Function to handle the renderization of the scene
+	width           uint32                                                  // Canvas width
+	height          uint32                                                  // Canvas height
 }
 
-func NewVideoScene(frameRate uint32, duration uint32, renderFunc func(surf *cairo.Surface, state map[string]interface{}), initState map[string]interface{}) *VideoScene_t {
+func NewVideoScene(width uint32, height uint32, frameRate uint32, duration uint32, renderFunc func(surf *cairo.Surface, state map[string]interface{}), initState map[string]interface{}) *VideoScene_t {
 	id := misc.NextId()
 	outputVideoPath := fmt.Sprintf("%s/scene_%04d.mp4", config.Config.OutputDir, id)
+
+	initState["width"] = width
+	initState["height"] = height
 
 	s := VideoScene_t{
 		id:              id,
@@ -35,6 +40,8 @@ func NewVideoScene(frameRate uint32, duration uint32, renderFunc func(surf *cair
 		outputVideoPath: outputVideoPath,
 		renderFunc:      renderFunc,
 		state:           initState,
+		width:           width,
+		height:          height,
 	}
 	frameDir := s.createSceneDir()
 	s.frameDir = frameDir
@@ -56,10 +63,18 @@ func (s VideoScene_t) GetId() misc.Id_t {
 	return s.id
 }
 
+func (s VideoScene_t) GetWidth() uint32 {
+	return s.width
+}
+
+func (s VideoScene_t) GetHeight() uint32 {
+	return s.width
+}
+
 // Render a single frame using Cairo
 func (s VideoScene_t) renderFrame(frameId uint32) {
 	filename := fmt.Sprintf("%s/frame_%08d.png", s.frameDir, frameId)
-	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, int(config.Config.Width), int(config.Config.Height))
+	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, int(s.width), int(s.height))
 
 	s.renderFunc(surface, s.state)
 

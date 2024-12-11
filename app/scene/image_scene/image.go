@@ -15,17 +15,24 @@ type ImageScene_t struct {
 	state           map[string]interface{}                                  // Scene state
 	outputImagePath string                                                  // Path of the generated video
 	renderFunc      func(surf *cairo.Surface, state map[string]interface{}) // function to handle the renderization of the scene
+	width           uint32                                                  // Canvas width
+	height          uint32                                                  // Canvas height
 }
 
-func NewImageScene(renderFunc func(surf *cairo.Surface, state map[string]interface{}), initState map[string]interface{}) *ImageScene_t {
+func NewImageScene(width uint32, height uint32, renderFunc func(surf *cairo.Surface, state map[string]interface{}), initState map[string]interface{}) *ImageScene_t {
 	id := misc.NextId()
 	outputImagePath := fmt.Sprintf("%s/scene_%04d.png", config.Config.OutputDir, id)
+
+	initState["width"] = width
+	initState["height"] = height
 
 	s := ImageScene_t{
 		id:              id,
 		renderFunc:      renderFunc,
 		state:           initState,
 		outputImagePath: outputImagePath,
+		width:           width,
+		height:          height,
 	}
 	scene.SceneList.Add(s)
 
@@ -40,9 +47,17 @@ func (s ImageScene_t) GetId() misc.Id_t {
 	return s.id
 }
 
+func (s ImageScene_t) GetWidth() uint32 {
+	return s.width
+}
+
+func (s ImageScene_t) GetHeight() uint32 {
+	return s.width
+}
+
 // Render a single frame using Cairo
 func (s ImageScene_t) renderFrame() {
-	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, int(config.Config.Width), int(config.Config.Height))
+	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, int(s.width), int(s.height))
 
 	s.renderFunc(surface, s.state)
 

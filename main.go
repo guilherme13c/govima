@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"sync"
 
 	"govima/app/object/latex"
@@ -15,14 +13,14 @@ import (
 )
 
 func main() {
-	createBaseFolders()
+	config.Init()
 
-	s1 := videoscene.NewVideoScene(60, 3, scene1Func, map[string]interface{}{
+	s1 := videoscene.NewVideoScene(800, 600, 60, 3, scene1Func, map[string]interface{}{
 		"totalFrames": 3 * 60,
 		"frameId":     0,
 	})
-	s2 := videoscene.NewVideoScene(60, 1, scene2Func, map[string]interface{}{})
-	s3 := imagescene.NewImageScene(scene3Func, map[string]interface{}{})
+	s2 := videoscene.NewVideoScene(800, 600, 60, 1, scene2Func, map[string]interface{}{})
+	s3 := imagescene.NewImageScene(800, 600, scene3Func, map[string]interface{}{})
 
 	wg := sync.WaitGroup{}
 
@@ -50,13 +48,15 @@ func main() {
 func scene1Func(surf *cairo.Surface, state map[string]interface{}) {
 	frameId := state["frameId"].(int)
 	totalFrames := state["totalFrames"].(int)
+	width := float64(state["width"].(uint32))
+	height := float64(state["height"].(uint32))
 
 	surf.SetAntialias(cairo.ANTIALIAS_GRAY)
 	surf.SetSourceRGB(0.8, 0.2, 0.2)
 	rectWidth := 100.0
 	rectHeight := 100.0
-	x := float64(frameId) / float64(totalFrames-1) * float64(config.Config.Width-rectWidth)
-	y := float64(config.Config.Height)/2 - rectHeight/2
+	x := float64(frameId) / float64(totalFrames-1) * (width - rectWidth)
+	y := height/2 - rectHeight/2
 	surf.Rectangle(x, y, rectWidth, rectHeight)
 	surf.Fill()
 
@@ -64,9 +64,12 @@ func scene1Func(surf *cairo.Surface, state map[string]interface{}) {
 }
 
 func scene2Func(surf *cairo.Surface, state map[string]interface{}) {
+	width := float64(state["width"].(uint32))
+	height := float64(state["height"].(uint32))
+
 	surf.SetAntialias(cairo.ANTIALIAS_GRAY)
 
-	surf.Rectangle(0, 0, config.Config.Width, config.Config.Height)
+	surf.Rectangle(0, 0, width, height)
 	surf.SetSourceRGB(0, 0, 0)
 	surf.Fill()
 
@@ -75,29 +78,19 @@ func scene2Func(surf *cairo.Surface, state map[string]interface{}) {
 	surf.SetSourceRGB(1, 1, 1)
 	text := fmt.Sprintf("%s", "Govima")
 	extents := surf.TextExtents(text)
-	surf.MoveTo(config.Config.Width/2-extents.Width/2, config.Config.Height/2+extents.Height/2)
+	surf.MoveTo(width/2-extents.Width/2, height/2+extents.Height/2)
 	surf.ShowText(text)
 }
 
 func scene3Func(surf *cairo.Surface, state map[string]interface{}) {
-	surf.Rectangle(0, 0, config.Config.Width, config.Config.Height)
+	width := float64(state["width"].(uint32))
+	height := float64(state["height"].(uint32))
+
+	surf.Rectangle(0, 0, width, height)
 	surf.SetSourceRGB(1, 1, 1)
 	surf.Fill()
 	latexObj := latex.NewLatexObject(`$f(x) = \frac{\sqrt{x}}{2\pi}$`, 12, 300, nil)
 	latexObj.Compile()
-	latexObj.Render(surf, config.Config.Width/2-latexObj.GetWidth(), config.Config.Height/2-latexObj.GetHeight())
-}
-
-func createBaseFolders() {
-	if err := os.MkdirAll(config.Config.FrameDir, 0755); err != nil {
-		log.Fatalf("Failed to create frame directory: %v", err)
-	}
-
-	if err := os.MkdirAll(config.Config.OutputDir, 0755); err != nil {
-		log.Fatalf("Failed to create output directory: %v", err)
-	}
-
-	if err := os.MkdirAll(config.Config.LatexDir, 0755); err != nil {
-		log.Fatalf("Failed to create latex directory: %v", err)
-	}
+	latexObj.Render(surf, width/2-latexObj.GetWidth(), height/2-latexObj.GetHeight())
+	latexObj.Clean()
 }
