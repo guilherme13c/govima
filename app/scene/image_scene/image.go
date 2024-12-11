@@ -34,29 +34,29 @@ func NewImageScene(width uint32, height uint32, renderFunc func(surf *cairo.Surf
 		width:           width,
 		height:          height,
 	}
-	scene.SceneList.Add(s)
+	scene.SceneList.Add(&s)
 
 	return &s
 }
 
-func (s ImageScene_t) Save() {
+func (s *ImageScene_t) Save() {
 	s.renderFrame()
 }
 
-func (s ImageScene_t) GetId() misc.Id_t {
+func (s *ImageScene_t) GetId() misc.Id_t {
 	return s.id
 }
 
-func (s ImageScene_t) GetWidth() uint32 {
+func (s *ImageScene_t) GetWidth() uint32 {
 	return s.width
 }
 
-func (s ImageScene_t) GetHeight() uint32 {
+func (s *ImageScene_t) GetHeight() uint32 {
 	return s.width
 }
 
 // Render a single frame using Cairo
-func (s ImageScene_t) renderFrame() {
+func (s *ImageScene_t) renderFrame() {
 	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, int(s.width), int(s.height))
 
 	s.renderFunc(surface, s.state)

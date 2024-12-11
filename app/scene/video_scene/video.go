@@ -46,12 +46,12 @@ func NewVideoScene(width uint32, height uint32, frameRate uint32, duration uint3
 	frameDir := s.createSceneDir()
 	s.frameDir = frameDir
 
-	scene.SceneList.Add(s)
+	scene.SceneList.Add(&s)
 
 	return &s
 }
 
-func (s VideoScene_t) Save() {
+func (s *VideoScene_t) Save() {
 	for frameId := uint32(0); frameId < s.numberOfFrames; frameId++ {
 		s.renderFrame(frameId)
 	}
@@ -59,20 +59,20 @@ func (s VideoScene_t) Save() {
 	s.clean()
 }
 
-func (s VideoScene_t) GetId() misc.Id_t {
+func (s *VideoScene_t) GetId() misc.Id_t {
 	return s.id
 }
 
-func (s VideoScene_t) GetWidth() uint32 {
+func (s *VideoScene_t) GetWidth() uint32 {
 	return s.width
 }
 
-func (s VideoScene_t) GetHeight() uint32 {
+func (s *VideoScene_t) GetHeight() uint32 {
 	return s.width
 }
 
 // Render a single frame using Cairo
-func (s VideoScene_t) renderFrame(frameId uint32) {
+func (s *VideoScene_t) renderFrame(frameId uint32) {
 	filename := fmt.Sprintf("%s/frame_%08d.png", s.frameDir, frameId)
 	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, int(s.width), int(s.height))
 
@@ -89,7 +89,7 @@ func (s VideoScene_t) renderFrame(frameId uint32) {
 }
 
 // Generate a video from the scene frames using FFmpeg
-func (s VideoScene_t) generateVideo() error {
+func (s *VideoScene_t) generateVideo() error {
 	framePattern := fmt.Sprintf("%s/frame_%%08d.png", s.frameDir)
 	return ffmpeg.Input(framePattern, ffmpeg.KwArgs{"framerate": s.frameRate}).
 		Output(s.outputVideoPath, config.Config.FFmpegArgs).
@@ -98,13 +98,13 @@ func (s VideoScene_t) generateVideo() error {
 		Run()
 }
 
-func (s VideoScene_t) clean() {
+func (s *VideoScene_t) clean() {
 	if err := os.RemoveAll(s.frameDir); err != nil {
 		log.Fatalf("Failed to remove frame directory: %v", err)
 	}
 }
 
-func (s VideoScene_t) createSceneDir() string {
+func (s *VideoScene_t) createSceneDir() string {
 	path := fmt.Sprintf("%s/scene_%04d", config.Config.FrameDir, s.id)
 	if err := os.MkdirAll(path, 0755); err != nil {
 		log.Fatalf("Failed to create frame directory: %v", err)

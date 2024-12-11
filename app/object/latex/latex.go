@@ -43,7 +43,7 @@ func NewLatexObject(expr string, size float64, dpi float64, font *ttf.Fonts) *La
 	}
 }
 
-func (o Latex_t) Compile() {
+func (o *Latex_t) Compile() {
 	f, errOpen := os.Create(o.tmpFilePath)
 	if errOpen != nil {
 		log.Fatalf("Failed to create latex temporary file: %s", o.tmpFilePath)
@@ -56,7 +56,7 @@ func (o Latex_t) Compile() {
 		log.Fatalf("Failed to render latex expression: %s", errRender)
 	}
 
-    // send cursor to the begining of the file
+	// send cursor to the begining of the file
 	if _, err := f.Seek(0, 0); err != nil {
 		log.Fatalf("Failed to reset file pointer: %v", err)
 	}
@@ -70,11 +70,11 @@ func (o Latex_t) Compile() {
 	o.height = float64(img.Height)
 }
 
-func (o Latex_t) GetId() misc.Id_t {
+func (o *Latex_t) GetId() misc.Id_t {
 	return o.id
 }
 
-func (o Latex_t) Render(surf *cairo.Surface, x float64, y float64) {
+func (o *Latex_t) Render(surf *cairo.Surface, x float64, y float64) {
 	img, status := cairo.NewSurfaceFromPNG(o.tmpFilePath)
 	if status != cairo.STATUS_SUCCESS {
 		log.Fatalf("Failed to load PNG file: %s", o.tmpFilePath)
@@ -85,14 +85,14 @@ func (o Latex_t) Render(surf *cairo.Surface, x float64, y float64) {
 	surf.Paint()
 }
 
-func (o Latex_t) Clean() {
+func (o *Latex_t) Clean() {
 	os.RemoveAll(o.tmpFilePath)
 }
 
-func (o Latex_t) GetWidth() float64 {
+func (o *Latex_t) GetWidth() float64 {
 	return o.width
 }
 
-func (o Latex_t) GetHeight() float64 {
+func (o *Latex_t) GetHeight() float64 {
 	return o.height
 }
