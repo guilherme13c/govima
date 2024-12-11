@@ -91,6 +91,6 @@ func scene3Func(surf *cairo.Surface, state map[string]interface{}) {
 	surf.Fill()
 	latexObj := latex.NewLatexObject(`$f(x) = \frac{\sqrt{x}}{2\pi}$`, 12, 300, nil)
 	latexObj.Compile()
-	latexObj.Render(surf, width/2-latexObj.GetWidth(), height/2-latexObj.GetHeight())
+	latexObj.Render(surf, width/2-latexObj.GetWidth()/2, height/2-latexObj.GetHeight()/2)
 	latexObj.Clean()
 }
