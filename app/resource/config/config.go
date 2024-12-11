@@ -5,10 +5,11 @@ import (
 )
 
 var ffmpegArgs = ffmpeg.KwArgs{
-	"c:v":     "libx264",
-	"pix_fmt": "yuv420p",
-	"preset":  "slow",
-	"crf":     18,
+	"c:v":      "libx264",
+	"pix_fmt":  "yuv420p",
+	"preset":   "slow",
+	"loglevel": "error",
+	"crf":      18,
 }
 
 type Config_t struct {

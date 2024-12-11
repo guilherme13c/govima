@@ -2,16 +2,20 @@ package scene
 
 type SceneList_t struct {
 	nextSceneId SceneId_t
-	Scenes      map[SceneId_t]*Scene_t
+	Scenes      []Scene_i
 }
 
-func (sl *SceneList_t) Add(s *Scene_t) {
+func (sl *SceneList_t) Add(s Scene_i) {
 	if sl.Scenes == nil {
-		sl.Scenes = make(map[SceneId_t]*Scene_t)
+		sl.Scenes = make([]Scene_i, 0)
 	}
 
-	sl.Scenes[s.Id] = s
+	sl.Scenes = append(sl.Scenes, s)
 	sl.nextSceneId++
+}
+
+func (sl *SceneList_t) GetNextId() SceneId_t {
+	return sl.nextSceneId
 }
 
 var SceneList SceneList_t
