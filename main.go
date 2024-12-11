@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"sync"
 
+	colorconst "govima/app/misc/constants/color"
 	"govima/app/object/latex"
+	"govima/app/object/shape"
 	"govima/app/resource/config"
 	"govima/app/scene"
 	imagescene "govima/app/scene/image_scene"
@@ -43,13 +45,21 @@ func scene1Func(surf *cairo.Surface, state map[string]interface{}) {
 	height := float64(state["height"].(uint32))
 
 	surf.SetAntialias(cairo.ANTIALIAS_GRAY)
-	surf.SetSourceRGB(0.8, 0.2, 0.2)
-	rectWidth := 100.0
-	rectHeight := 100.0
-	x := float64(frameId) / float64(totalFrames-1) * (width - rectWidth)
-	y := height/2 - rectHeight/2
-	surf.Rectangle(x, y, rectWidth, rectHeight)
-	surf.Fill()
+
+	square := shape.NewRectangeObject(100, 100, colorconst.Blue)
+	xSquare := float64(frameId)/float64(totalFrames-1)*(width-square.GetWidth()) + square.GetWidth()/2
+	ySquare := height/2 - square.GetHeight()/2 - 200
+	square.Render(surf, xSquare, ySquare)
+
+	circle := shape.NewCircleObject(50, colorconst.Red)
+	xCircle := float64(frameId)/float64(totalFrames-1)*(width-circle.GetWidth()) + circle.GetWidth()/2
+	yCircle := height/2 - circle.GetHeight()/2
+	circle.Render(surf, xCircle, yCircle)
+
+	regPoly := shape.NewRegularPolygonObject(3, 50, colorconst.Green)
+	xRegPoly := float64(frameId)/float64(totalFrames-1)*(width-regPoly.GetWidth()) + regPoly.GetWidth()/2
+	yRegPoly := height/2 - regPoly.GetHeight()/2 + 200
+	regPoly.Render(surf, xRegPoly, yRegPoly)
 
 	state["frameId"] = frameId + 1
 }
@@ -76,6 +86,8 @@ func scene2Func(surf *cairo.Surface, state map[string]interface{}) {
 func scene3Func(surf *cairo.Surface, state map[string]interface{}) {
 	width := float64(state["width"].(uint32))
 	height := float64(state["height"].(uint32))
+
+	surf.SetAntialias(cairo.ANTIALIAS_GRAY)
 
 	surf.Rectangle(0, 0, width, height)
 	surf.SetSourceRGB(1, 1, 1)

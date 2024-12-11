@@ -19,12 +19,13 @@ import (
 type Latex_t struct {
 	id          misc.Id_t
 	tmpFilePath string
-	expr        string
-	size        float64
-	dpi         float64
-	font        *ttf.Fonts
 	width       float64
 	height      float64
+
+	Expr string
+	Size float64
+	Dpi  float64
+	Font *ttf.Fonts
 }
 
 func NewLatexObject(expr string, size float64, dpi float64, font *ttf.Fonts) *Latex_t {
@@ -34,10 +35,10 @@ func NewLatexObject(expr string, size float64, dpi float64, font *ttf.Fonts) *La
 	return &Latex_t{
 		id:          id,
 		tmpFilePath: path,
-		expr:        expr,
-		size:        size,
-		dpi:         dpi,
-		font:        font,
+		Expr:        expr,
+		Size:        size,
+		Dpi:         dpi,
+		Font:        font,
 		width:       0,
 		height:      0,
 	}
@@ -51,7 +52,7 @@ func (o *Latex_t) Compile() {
 	defer f.Close()
 
 	dst := drawimg.NewRenderer(f)
-	errRender := mtex.Render(dst, o.expr, o.size, o.dpi, o.font)
+	errRender := mtex.Render(dst, o.Expr, o.Size, o.Dpi, o.Font)
 	if errRender != nil {
 		log.Fatalf("Failed to render latex expression: %s", errRender)
 	}
