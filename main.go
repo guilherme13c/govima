@@ -48,18 +48,23 @@ func scene1Func(surf *cairo.Surface, state map[string]interface{}) {
 
 	square := shape.NewRectangeObject(100, 100, colorconst.Blue)
 	xSquare := float64(frameId)/float64(totalFrames-1)*(width-square.GetWidth()) + square.GetWidth()/2
-	ySquare := height/2 - square.GetHeight()/2 - 200
+	ySquare := height/2 - square.GetHeight()/2 - 150
 	square.Render(surf, xSquare, ySquare)
 
 	circle := shape.NewCircleObject(50, colorconst.Red)
 	xCircle := float64(frameId)/float64(totalFrames-1)*(width-circle.GetWidth()) + circle.GetWidth()/2
-	yCircle := height/2 - circle.GetHeight()/2
+	yCircle := height/2 - circle.GetHeight()/2 - 50
 	circle.Render(surf, xCircle, yCircle)
 
 	regPoly := shape.NewRegularPolygonObject(3, 50, colorconst.Green)
 	xRegPoly := float64(frameId)/float64(totalFrames-1)*(width-regPoly.GetWidth()) + regPoly.GetWidth()/2
-	yRegPoly := height/2 - regPoly.GetHeight()/2 + 200
+	yRegPoly := height/2 - regPoly.GetHeight()/2 + 50
 	regPoly.Render(surf, xRegPoly, yRegPoly)
+
+	poly := shape.NewPolygonObject([][2]float64{{50, 50}, {50, -50}, {-50, -50}, {-50, 50}}, colorconst.White)
+	xPoly := float64(frameId)/float64(totalFrames-1)*(width-poly.GetWidth()) + poly.GetWidth()/2
+	yPoly := height/2 - regPoly.GetHeight()/2 + 150
+	poly.Render(surf, xPoly, yPoly)
 
 	state["frameId"] = frameId + 1
 }
