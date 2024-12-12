@@ -18,12 +18,12 @@ import (
 func main() {
 	config.Init()
 
-	videoscene.NewVideoScene(800, 600, 60, 3, scene1Func, map[string]interface{}{
+	videoscene.NewVideoScene(1920, 1080, 60, 3, scene1Func, map[string]interface{}{
 		"totalFrames": 3 * 60,
 		"frameId":     0,
 	})
-	videoscene.NewVideoScene(800, 600, 60, 1, scene2Func, map[string]interface{}{})
-	imagescene.NewImageScene(800, 600, scene3Func, map[string]interface{}{})
+	videoscene.NewVideoScene(1080, 1080, 60, 1, scene2Func, map[string]interface{}{})
+	imagescene.NewImageScene(1080, 1920, scene3Func, map[string]interface{}{})
 
 	wg := sync.WaitGroup{}
 
