@@ -7,9 +7,9 @@ import (
 	colorconst "govima/app/misc/constants/color"
 	"govima/app/object/latex"
 	"govima/app/object/shape"
+	"govima/app/object/text"
 	"govima/app/resource/config"
 	"govima/app/scene"
-	imagescene "govima/app/scene/image_scene"
 	videoscene "govima/app/scene/video_scene"
 
 	"github.com/ungerik/go-cairo"
@@ -22,8 +22,8 @@ func main() {
 		"totalFrames": 3 * 60,
 		"frameId":     0,
 	})
-	videoscene.NewVideoScene(1080, 1080, 60, 1, scene2Func, map[string]interface{}{})
-	imagescene.NewImageScene(1080, 1920, scene3Func, map[string]interface{}{})
+	// videoscene.NewVideoScene(1080, 1080, 60, 1, scene2Func, map[string]interface{}{})
+	// imagescene.NewImageScene(1080, 1920, scene3Func, map[string]interface{}{})
 
 	wg := sync.WaitGroup{}
 
@@ -46,7 +46,10 @@ func scene1Func(surf *cairo.Surface, state map[string]interface{}) {
 
 	surf.SetAntialias(cairo.ANTIALIAS_GRAY)
 
-	square := shape.NewRectangeObject(100, 100, colorconst.Blue)
+	title := text.NewTextObject("Shapes!", 36, colorconst.Orange, "Sans")
+	title.Render(surf, width/2-title.GetWidth()/2, height/2-title.GetHeight()/2)
+
+	square := shape.NewRectangleObject(100, 100, colorconst.Blue)
 	xSquare := float64(frameId)/float64(totalFrames-1)*(width-square.GetWidth()) + square.GetWidth()/2
 	ySquare := height/2 - square.GetHeight()/2 - 150
 	square.Render(surf, xSquare, ySquare)

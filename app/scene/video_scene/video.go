@@ -3,6 +3,8 @@ package videoscene
 import (
 	"fmt"
 	"govima/app/misc"
+	"govima/app/misc/color"
+	colorconst "govima/app/misc/constants/color"
 	"govima/app/resource/config"
 	"govima/app/scene"
 	"log"
@@ -31,6 +33,7 @@ func NewVideoScene(width uint32, height uint32, frameRate uint32, duration uint3
 
 	initState["width"] = width
 	initState["height"] = height
+	initState["bg_color"] = colorconst.Black
 
 	s := VideoScene_t{
 		id:              id,
@@ -75,6 +78,11 @@ func (s *VideoScene_t) GetHeight() uint32 {
 func (s *VideoScene_t) renderFrame(frameId uint32) {
 	filename := fmt.Sprintf("%s/frame_%08d.png", s.frameDir, frameId)
 	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, int(s.width), int(s.height))
+	defer surface.Finish()
+
+	bgColor := s.state["bg_color"].(color.Color_i).AsFloat64RGBA()
+	surface.SetSourceRGBA(bgColor.R, bgColor.G, bgColor.B, bgColor.A)
+	surface.Paint()
 
 	s.renderFunc(surface, s.state)
 

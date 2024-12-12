@@ -3,6 +3,8 @@ package imagescene
 import (
 	"fmt"
 	"govima/app/misc"
+	"govima/app/misc/color"
+	colorconst "govima/app/misc/constants/color"
 	"govima/app/resource/config"
 	"govima/app/scene"
 	"log"
@@ -25,6 +27,7 @@ func NewImageScene(width uint32, height uint32, renderFunc func(surf *cairo.Surf
 
 	initState["width"] = width
 	initState["height"] = height
+	initState["bg_color"] = colorconst.Black
 
 	s := ImageScene_t{
 		id:              id,
@@ -58,6 +61,11 @@ func (s *ImageScene_t) GetHeight() uint32 {
 // Render a single frame using Cairo
 func (s *ImageScene_t) renderFrame() {
 	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, int(s.width), int(s.height))
+	defer surface.Finish()
+
+	bgColor := s.state["bg_color"].(color.Color_i).AsFloat64RGBA()
+	surface.SetSourceRGBA(bgColor.R, bgColor.G, bgColor.B, bgColor.A)
+	surface.Paint()
 
 	s.renderFunc(surface, s.state)
 

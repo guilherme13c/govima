@@ -17,7 +17,7 @@ type Rectangle_t struct {
 	Color       color.Color_i
 }
 
-func NewRectangeObject(width float64, height float64, color color.Color_i) *Rectangle_t {
+func NewRectangleObject(width float64, height float64, color color.Color_i) *Rectangle_t {
 	id := misc.NextId()
 
 	return &Rectangle_t{
