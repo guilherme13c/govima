@@ -9,12 +9,15 @@ import (
 )
 
 type Rectangle_t struct {
-	id          misc.Id_t
+	id misc.Id_t
+
 	Fill        bool
 	StrokeWidth float64
 	Width       float64
 	Height      float64
 	Color       color.Color_i
+	x           float64
+	y           float64
 }
 
 func NewRectangleObject(width float64, height float64, color color.Color_i) *Rectangle_t {
@@ -27,6 +30,8 @@ func NewRectangleObject(width float64, height float64, color color.Color_i) *Rec
 		Width:       width,
 		Height:      height,
 		Color:       color,
+		x:           0,
+		y:           0,
 	}
 }
 
@@ -34,12 +39,12 @@ func (o *Rectangle_t) GetId() misc.Id_t {
 	return o.id
 }
 
-func (o *Rectangle_t) Render(surf *cairo.Surface, x float64, y float64) {
+func (o *Rectangle_t) Render(surf *cairo.Surface) {
 	color := o.Color.AsFloat64RGBA()
 
 	surf.SetSourceRGBA(color.R, color.G, color.B, color.A)
 
-	surf.Rectangle(x-o.Width/2, y-o.Height/2, o.Width, o.Height)
+	surf.Rectangle(o.x-o.Width/2, o.y-o.Height/2, o.Width, o.Height)
 
 	if o.Fill {
 		surf.Fill()
@@ -49,10 +54,15 @@ func (o *Rectangle_t) Render(surf *cairo.Surface, x float64, y float64) {
 	}
 }
 
-func (o *Rectangle_t) GetWidth() float64 {
-	return o.Width
+func (o *Rectangle_t) GetDim() (float64, float64) {
+	return o.Width, o.Height
 }
 
-func (o *Rectangle_t) GetHeight() float64 {
-	return o.Height
+func (o *Rectangle_t) GetPos() (float64, float64) {
+	return o.x, o.y
+}
+
+func (o *Rectangle_t) SetPos(x float64, y float64) {
+	o.x = x
+	o.y = y
 }

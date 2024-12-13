@@ -8,7 +8,8 @@ import (
 
 type Object_i interface {
 	GetId() misc.Id_t
-	Render(surf *cairo.Surface, x float64, y float64)
-	GetWidth() float64
-	GetHeight() float64
+	Render(surf *cairo.Surface)
+	GetDim() (float64, float64)
+	GetPos() (float64, float64)
+	SetPos(float64, float64)
 }

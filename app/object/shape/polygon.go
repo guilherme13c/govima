@@ -17,6 +17,8 @@ type Polygon_t struct {
 	width  float64
 	sides  uint64
 
+	x           float64
+	y           float64
 	Vertices    [][2]float64
 	Fill        bool
 	StrokeWidth float64
@@ -52,6 +54,8 @@ func NewPolygonObject(vertices [][2]float64, color color.Color_i) *Polygon_t {
 		StrokeWidth: styleconst.DefaultStrokeWidth,
 		sides:       uint64(sides),
 		Color:       color,
+		x:           0,
+		y:           0,
 	}
 }
 
@@ -59,14 +63,14 @@ func (o *Polygon_t) GetId() misc.Id_t {
 	return o.id
 }
 
-func (o *Polygon_t) Render(surf *cairo.Surface, x float64, y float64) {
+func (o *Polygon_t) Render(surf *cairo.Surface) {
 	color := o.Color.AsFloat64RGBA()
 
 	surf.SetSourceRGBA(color.R, color.G, color.B, color.A)
 
-	surf.MoveTo(x+o.Vertices[0][0], y+o.Vertices[0][1])
+	surf.MoveTo(o.x+o.Vertices[0][0], o.y+o.Vertices[0][1])
 	for i := uint64(1); i < o.sides; i++ {
-		surf.LineTo(x+o.Vertices[i][0], y+o.Vertices[i][1])
+		surf.LineTo(o.x+o.Vertices[i][0], o.y+o.Vertices[i][1])
 	}
 	surf.ClosePath()
 
@@ -78,10 +82,15 @@ func (o *Polygon_t) Render(surf *cairo.Surface, x float64, y float64) {
 	}
 }
 
-func (o *Polygon_t) GetWidth() float64 {
-	return o.width
+func (o *Polygon_t) GetDim() (float64, float64) {
+	return o.width, o.height
 }
 
-func (o *Polygon_t) GetHeight() float64 {
-	return o.height
+func (o *Polygon_t) GetPos() (float64, float64) {
+	return o.x, o.y
+}
+
+func (o *Polygon_t) SetPos(x float64, y float64) {
+	o.x = x
+	o.y = y
 }

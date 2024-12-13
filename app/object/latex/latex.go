@@ -26,6 +26,8 @@ type Latex_t struct {
 	Size float64
 	Dpi  float64
 	Font *ttf.Fonts
+	x    float64
+	y    float64
 }
 
 func NewLatexObject(expr string, size float64, dpi float64, font *ttf.Fonts) *Latex_t {
@@ -41,6 +43,8 @@ func NewLatexObject(expr string, size float64, dpi float64, font *ttf.Fonts) *La
 		Font:        font,
 		width:       0,
 		height:      0,
+		x:           0,
+		y:           0,
 	}
 }
 
@@ -75,14 +79,14 @@ func (o *Latex_t) GetId() misc.Id_t {
 	return o.id
 }
 
-func (o *Latex_t) Render(surf *cairo.Surface, x float64, y float64) {
+func (o *Latex_t) Render(surf *cairo.Surface) {
 	img, status := cairo.NewSurfaceFromPNG(o.tmpFilePath)
 	if status != cairo.STATUS_SUCCESS {
 		log.Fatalf("Failed to load PNG file: %s", o.tmpFilePath)
 	}
 	defer img.Finish()
 
-	surf.SetSourceSurface(img, x, y)
+	surf.SetSourceSurface(img, o.x, o.y)
 	surf.Paint()
 }
 
@@ -90,10 +94,15 @@ func (o *Latex_t) Clean() {
 	os.RemoveAll(o.tmpFilePath)
 }
 
-func (o *Latex_t) GetWidth() float64 {
-	return o.width
+func (o *Latex_t) GetDim() (float64, float64) {
+	return o.width, o.height
 }
 
-func (o *Latex_t) GetHeight() float64 {
-	return o.height
+func (o *Latex_t) GetPos() (float64, float64) {
+	return o.x, o.y
+}
+
+func (o *Latex_t) SetPos(x float64, y float64) {
+	o.x = x
+	o.y = y
 }

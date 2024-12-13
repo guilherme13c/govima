@@ -17,6 +17,8 @@ type Text_t struct {
 	Color       color.Color_i
 	FontFace    string
 	StrokeWidth float64
+	x           float64
+	y           float64
 }
 
 func NewTextObject(text string, fontSize float64, color color.Color_i, fontFace string) *Text_t {
@@ -39,6 +41,8 @@ func NewTextObject(text string, fontSize float64, color color.Color_i, fontFace 
 		Color:       color,
 		FontFace:    fontFace,
 		StrokeWidth: 1,
+		x:           0,
+		y:           0,
 	}
 }
 
@@ -63,10 +67,15 @@ func (o *Text_t) Render(surf *cairo.Surface, x float64, y float64) {
 	surf.Stroke()
 }
 
-func (o *Text_t) GetWidth() float64 {
-	return o.width
+func (o *Text_t) GetDim() (float64, float64) {
+	return o.width, o.height
 }
 
-func (o *Text_t) GetHeight() float64 {
-	return o.height
+func (o *Text_t) GetPos() (float64, float64) {
+	return o.x, o.y
+}
+
+func (o *Text_t) SetPos(x float64, y float64) {
+	o.x = x
+	o.y = y
 }

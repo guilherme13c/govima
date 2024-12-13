@@ -22,6 +22,8 @@ type RegularPolygon_t struct {
 	Sides       uint64
 	Radius      float64
 	Color       color.Color_i
+	x           float64
+	y           float64
 }
 
 func NewRegularPolygonObject(sides uint64, radius float64, color color.Color_i) *RegularPolygon_t {
@@ -61,6 +63,8 @@ func NewRegularPolygonObject(sides uint64, radius float64, color color.Color_i) 
 		Sides:       sides,
 		Radius:      radius,
 		Color:       color,
+		x:           0,
+		y:           0,
 	}
 }
 
@@ -68,14 +72,14 @@ func (o *RegularPolygon_t) GetId() misc.Id_t {
 	return o.id
 }
 
-func (o *RegularPolygon_t) Render(surf *cairo.Surface, x float64, y float64) {
+func (o *RegularPolygon_t) Render(surf *cairo.Surface) {
 	color := o.Color.AsFloat64RGBA()
 
 	surf.SetSourceRGBA(color.R, color.G, color.B, color.A)
 
-	surf.MoveTo(x+o.vertices[0][0], y+o.vertices[0][1])
+	surf.MoveTo(o.x+o.vertices[0][0], o.y+o.vertices[0][1])
 	for i := uint64(1); i < o.Sides; i++ {
-		surf.LineTo(x+o.vertices[i][0], y+o.vertices[i][1])
+		surf.LineTo(o.x+o.vertices[i][0], o.y+o.vertices[i][1])
 	}
 	surf.ClosePath()
 
@@ -87,10 +91,15 @@ func (o *RegularPolygon_t) Render(surf *cairo.Surface, x float64, y float64) {
 	}
 }
 
-func (o *RegularPolygon_t) GetWidth() float64 {
-	return o.width
+func (o *RegularPolygon_t) GetDim() (float64, float64) {
+	return o.width, o.height
 }
 
-func (o *RegularPolygon_t) GetHeight() float64 {
-	return o.height
+func (o *RegularPolygon_t) GetPos() (float64, float64) {
+	return o.x, o.y
+}
+
+func (o *RegularPolygon_t) SetPos(x float64, y float64) {
+	o.x = x
+	o.y = y
 }
